@@ -5,16 +5,17 @@ import 'package:restorant_app/widgets/card_search.dart';
 
 import '../provider/search_provider.dart';
 
-
-class SearchPage extends SearchDelegate<RestaurantSearchProvider>{
-
-
+class SearchPage extends SearchDelegate<RestaurantSearchProvider> {
   @override
   List<Widget> buildActions(BuildContext context) {
     // TODO: implement buildActions
-    return [IconButton(icon: const Icon(Icons.clear), onPressed: () {
-      query = "";
-    })];
+    return [
+      IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            query = "";
+          })
+    ];
   }
 
   @override
@@ -25,21 +26,28 @@ class SearchPage extends SearchDelegate<RestaurantSearchProvider>{
           icon: AnimatedIcons.menu_arrow,
           progress: transitionAnimation,
         ),
-        onPressed: () {Navigator.pop(context);});
+        onPressed: () {
+          Navigator.pop(context);
+        });
   }
 
   @override
   Widget buildResults(BuildContext context) {
-
     return ChangeNotifierProvider<RestaurantSearchProvider>(
       create: (_) => RestaurantSearchProvider(apiService: ApiService())
         ..fetchAllRestaurant(query),
       child: Consumer<RestaurantSearchProvider>(
         builder: (context, state, _) {
-          if (state.state == ResultState.Loading) {
+          if (state.state == ResultState.loading) {
             return const Center(
               child: CircularProgressIndicator(
                 backgroundColor: Colors.blueAccent,
+              ),
+            );
+          } else if (state.state == ResultState.error) {
+            return Center(
+              child: Material(
+                child: Text(state.message),
               ),
             );
           } else if (query.length < 3) {
@@ -53,20 +61,18 @@ class SearchPage extends SearchDelegate<RestaurantSearchProvider>{
                 )
               ],
             );
-          } else if (state.state == ResultState.HasData) {
+          } else if (state.state == ResultState.hasData) {
             //Tampilan 1
             return ListView.builder(
               shrinkWrap: true,
               itemCount: state.result!.restaurants.length,
               itemBuilder: (context, index) {
                 var restaurantItem = state.result!.restaurants[index];
-                return CardRestaurantSearchPage(restaurantSearchItems: restaurantItem);
-
+                return CardRestaurantSearchPage(
+                    restaurantSearchItems: restaurantItem);
               },
             );
-
-
-          } else if (state.state != ResultState.HasData) {
+          } else if (state.state != ResultState.hasData) {
             //Tampilan 2
             // Provider.of<RestaurantSearchProvider>(context, listen: false);
             return Column(
@@ -105,7 +111,6 @@ class SearchPage extends SearchDelegate<RestaurantSearchProvider>{
         },
       ),
     );
-
   }
 
   @override
@@ -115,5 +120,4 @@ class SearchPage extends SearchDelegate<RestaurantSearchProvider>{
       child: Text('Masukkan kata kunci disini'),
     );
   }
-
 }

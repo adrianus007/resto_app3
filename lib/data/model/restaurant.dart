@@ -1,5 +1,5 @@
-class ArticleResult {
-  ArticleResult({
+class RestaurantResult {
+  RestaurantResult({
     required this.error,
     required this.message,
     required this.count,
@@ -11,21 +11,26 @@ class ArticleResult {
   int count;
   List<Restaurant> restaurants;
 
-  factory ArticleResult.fromJson(Map<String, dynamic> json) => ArticleResult(
-    error: json["error"],
-    message: json["message"],
-    count: json["count"],
-
-    restaurants: List<Restaurant>.from(json["restaurants"].map((x) => Restaurant.fromJson(x))
-    .where((restaurants) =>
-    restaurants.id != null &&
-    restaurants.name != null &&
-    restaurants.description != null &&
-    restaurants.pictureId != null &&
-    restaurants.city != null &&
-    restaurants.rating != null)),
-  );
-
+  factory RestaurantResult.fromJson(Map<String, dynamic> json) =>
+      RestaurantResult(
+        error: json["error"],
+        message: json["message"],
+        count: json["count"],
+        restaurants: List<Restaurant>.from(json["restaurants"]
+            .map((x) => Restaurant.fromJson(x))
+            .where((restaurants) =>
+                restaurants.id != null &&
+                restaurants.name != null &&
+                restaurants.description != null &&
+                restaurants.pictureId != null &&
+                restaurants.city != null &&
+                restaurants.rating != null)),
+      );
+  Map<String, dynamic> toJson() => {
+        "status": error,
+        "message": message,
+        "articles": List<dynamic>.from(restaurants.map((x) => x.toJson())),
+      };
 }
 
 class Restaurant {
@@ -46,12 +51,20 @@ class Restaurant {
   double rating;
 
   factory Restaurant.fromJson(Map<String, dynamic> json) => Restaurant(
-    id: json["id"],
-    name: json["name"],
-    description: json["description"],
-    pictureId: json["pictureId"],
-    city: json["city"],
-    rating: json["rating"].toDouble(),
-  );
+        id: json["id"],
+        name: json["name"],
+        description: json["description"],
+        pictureId: json["pictureId"],
+        city: json["city"],
+        rating: json["rating"].toDouble(),
+      );
 
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "description": description,
+        "pictureId": pictureId,
+        "city": city,
+        "rating": rating,
+      };
 }

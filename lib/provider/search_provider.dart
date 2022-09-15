@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:restorant_app/data/api/api_service.dart';
 import 'package:restorant_app/data/model/restorant_search.dart';
 
-enum ResultState { Loading, NoData, HasData, Error }
+enum ResultState { loading, noData, hasData, error }
 
 class RestaurantSearchProvider extends ChangeNotifier {
   final ApiService apiService;
@@ -24,24 +24,24 @@ class RestaurantSearchProvider extends ChangeNotifier {
 
   Future<dynamic> fetchAllRestaurant(String query) async {
     try {
-      _state = ResultState.Loading;
+      _state = ResultState.loading;
       _query = query;
-
 
       final screstaurants = await apiService.getSearchRestaurant(query);
       if (screstaurants.restaurants.isEmpty) {
-        _state = ResultState.NoData;
+        _state = ResultState.noData;
         notifyListeners();
         return _message = 'Empty Data';
       } else {
-        _state = ResultState.HasData;
+        _state = ResultState.hasData;
         notifyListeners();
         return _restaurantsResult = screstaurants;
       }
     } catch (e) {
-      _state = ResultState.Error;
+      _state = ResultState.error;
       notifyListeners();
-      return 'Error --> $e';
+      //$e = 'error internet anda terputus atau gangguan'
+      return _message = 'Error, internet anda terputus atau gangguan';
     }
   }
 }

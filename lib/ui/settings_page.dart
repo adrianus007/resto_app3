@@ -1,8 +1,12 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-import '../widgets/platform_widget.dart';
+import 'package:restorant_app/provider/preferences_provider.dart';
+import 'package:restorant_app/provider/scheduling_provider.dart';
+import 'package:restorant_app/widgets/custom_dialog.dart';
+import 'package:restorant_app/widgets/platform_widget.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
   static const String settingsTitle = 'Settings';
@@ -28,57 +32,33 @@ class SettingsPage extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context) {
-    return ListView(
-      children: [
-        Material(
-          child: ListTile(
-            title: const Text('Dark Theme'),
-            trailing: Switch.adaptive(
-              value: false,
-              onChanged: (value) {
-                defaultTargetPlatform == TargetPlatform.iOS
-                    ? showCupertinoDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (context) {
-                    return CupertinoAlertDialog(
-                      title: const Text('Coming Soon!'),
-                      content:
-                      const Text('This feature will be coming soon!'),
-                      actions: [
-                        CupertinoDialogAction(
-                          child: const Text('Ok'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
+    return Consumer<PreferencesProvider>(
+      builder: (context, provider, child) {
+        return ListView(
+          children: [
+            Material(
+              child: ListTile(
+                title: const Text('Notifikasi Resto'),
+                trailing: Consumer<SchedulingProvider>(
+                  builder: (context, scheduled, _) {
+                    return Switch.adaptive(
+                      value: provider.isDailyNewsActive,
+                      onChanged: (value) async {
+                        if (Platform.isIOS) {
+                          customDialog(context);
+                        } else {
+                          scheduled.scheduledNews(value);
+                          provider.enableDailyNews(value);
+                        }
+                      },
                     );
                   },
-                )
-                    : showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Coming Soon!'),
-                      content:
-                      const Text('This feature will be coming soon!'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Ok'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 

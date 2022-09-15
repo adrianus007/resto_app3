@@ -1,4 +1,4 @@
-import 'article.dart';
+import 'restaurant.dart';
 
 class RestaurantSearch {
   RestaurantSearch({
